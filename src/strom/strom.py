@@ -7,7 +7,7 @@ class StromquistKnives(object):
     self.p2 = p2
     self.p3 = p3
 
-    #self.run((p1, p2, p3), resolution)
+    self.run((p1, p2, p3), resolution)
 
 
   def run(self, prefs, resolution):
@@ -16,6 +16,55 @@ class StromquistKnives(object):
     p_knives = [0, 0, 0]
 
 
+    cuttingIndex = -1
+    while cuttingIndex < 0:
+      #Update knife positions
+      for i in range(3):
+        p_knives[i] = self.findHalfWayPoint(prefs[i], ref_knife_pos, 1)
+
+      #Determine if a cut should be made
+      for i in range(3):
+        pieceX = prefs[i].valueOfPiece(0, ref_knife_pos)
+        pieceY = prefs[i].valueOfPiece(ref_knife_pos, p_knives[1])
+        pieceZ = prefs[i].valueOfPiece(p_knives[1], 1)
+
+        if pieceX >= (1/3.0) and pieceX > pieceY and pieceX > pieceZ:
+          cuttingIndex = i
+          print p_knives
+          break
+
+      ref_knife_pos += resolution
+
+
+    # Get a list of the players who didn't cut
+    remainingPlayers = range(3)
+    remainingPlayers.remove(cuttingIndex)
+
+    leftPlayer = remainingPlayers[0]
+    rightPlayer = remainingPlayers[1]
+   
+   
+    pYknife, pYplayer, pZplayer = (None, None, None)
+    #Pick which other knife cuts
+    if p_knives[leftPlayer] < p_knives[rightPlayer]:
+      pYknife = p_knives[leftPlayer]
+      pYplayer = leftPlayer
+      pZplayer = rightPlayer
+    else:
+      pYknife = p_knives[rightPlayer]
+      pYplayer = rightPlayer
+      pZplayer = leftPlayer
+      
+    pXval = prefs[cuttingIndex].valueOfPiece(0, ref_knife_pos)
+    pYval = prefs[pYplayer].valueOfPiece(ref_knife_pos, pYknife)
+    pZval = prefs[pZplayer].valueOfPiece(pYknife, 1)
+
+
+    print "Final Values:"
+    print pXval
+    print pYval
+    print pZval
+        
   def findHalfWayPoint(self, prefs, left, right):
     total_val =  prefs.valueOfPiece(left, right)
     half_val = total_val / 2.0
@@ -25,9 +74,7 @@ class StromquistKnives(object):
     mid = (sr + sl) / 2.0
     for i in range(100):
       mid = (sr + sl) / 2.0
-      print "Mid: ", mid
       piece_val = prefs.valueOfPiece(left, mid)
-      print "Piece val: ", piece_val
       if isCloseEnough(piece_val, half_val):
         return mid
       else:
@@ -35,9 +82,6 @@ class StromquistKnives(object):
           sr = mid
         else:
           sl = mid
-    print "none found"
-    print "half val: ", half_val
-    print "val found: ", prefs.valueOfPiece(left, mid)
     return mid
           
 
