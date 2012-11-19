@@ -1,5 +1,6 @@
-import sys
-sys.path.insert(0, '../..')
+import sys, os.path
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 from prefs.Prefs import Prefs
 from strom import StromquistKnives
 

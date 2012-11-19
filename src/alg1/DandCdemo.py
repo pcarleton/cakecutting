@@ -3,8 +3,8 @@ Created on Oct 28, 2012
 
 @author: cytron
 '''
-import sys
-sys.path.insert(0,'../..')
+import sys, os.path
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from DivideAndChoose import DivideAndChoose
 from prefs.Prefs import Prefs
