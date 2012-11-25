@@ -12,9 +12,9 @@ f1 = sys.argv[1]
 f2 = sys.argv[2]
 f3 = sys.argv[3]
 
-p1 = Prefs.fromFile("f1")
-p2 = Prefs.fromFile("f2")
-p3 = Prefs.fromFile("f3")
+p1 = Prefs.fromFile(f1)
+p2 = Prefs.fromFile(f2)
+p3 = Prefs.fromFile(f3)
 
 
 stromK = StromquistKnives(p1, p2, p3)
