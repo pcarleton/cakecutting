@@ -22,18 +22,23 @@ class StromquistKnives(object):
 
     sl = left
     sr = right
-    for i in range(100)
-      mid = (sr + sl) / 2
+    mid = (sr + sl) / 2.0
+    for i in range(100):
+      mid = (sr + sl) / 2.0
+      print "Mid: ", mid
       piece_val = prefs.valueOfPiece(left, mid)
+      print "Piece val: ", piece_val
       if isCloseEnough(piece_val, half_val):
         return mid
       else:
         if piece_val > half_val:
           sr = mid
         else:
-          sr = (mid + sr) / 2
+          sl = mid
     print "none found"
-    return 0
+    print "half val: ", half_val
+    print "val found: ", prefs.valueOfPiece(left, mid)
+    return mid
           
 
 
