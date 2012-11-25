@@ -34,9 +34,9 @@ function drawVisualization() {
     p2val = (nextp2[0] == nextX) ? nextp2[1]*prefs2.scaleFactor : null;
     p3val = (nextp3[0] == nextX) ? nextp3[1]*prefs3.scaleFactor : null;
 
-    if (p1val) { pref1Index++; }
-    if (p2val) { pref2Index++; }
-    if (p3val) { pref3Index++; }
+    if (p1val != null) { pref1Index++; }
+    if (p2val != null) { pref2Index++; }
+    if (p3val != null) { pref3Index++; }
 
     data.addRow([nextX, p1val, p2val, p3val]);
   }
