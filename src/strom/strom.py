@@ -30,7 +30,6 @@ class StromquistKnives(object):
 
         if pieceX >= (1/3.0) and pieceX > pieceY and pieceX > pieceZ:
           cuttingIndex = i
-          print p_knives
           break
 
       ref_knife_pos += resolution
@@ -61,9 +60,9 @@ class StromquistKnives(object):
 
 
     print "Final Values:"
-    print pXval
-    print pYval
-    print pZval
+    print "Player {3} From {0} to {1}, value: {2}".format(0, ref_knife_pos, pXval, cuttingIndex)
+    print "Player {3} From {0} to {1}, value: {2}".format(ref_knife_pos, pYknife, pYval, pYplayer)
+    print "Player {3} From {0} to {1}, value: {2}".format(pYknife, 1, pZval, pZplayer)
         
   def findHalfWayPoint(self, prefs, left, right):
     total_val =  prefs.valueOfPiece(left, right)
