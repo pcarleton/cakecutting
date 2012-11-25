@@ -2,10 +2,11 @@ google.load("visualization", "1", {packages:["corechart"]});
 google.setOnLoadCallback(drawVisualization);
 function drawVisualization() {
   // Create and populate the data table.
-  var prefs1 = getPrefs();
-  var prefs2 = { points: [[0, 1], [1, 1]], }; 
+  var prefs1 = getPrefs(1);
+  var prefs2 = getPrefs(2);
+  var prefs3 = getPrefs(3);
 
-  prefs2.scaleFactor = 1.0/getAreaUnderneath(prefs2.points);
+  var prefs = [prefs1, prefs2, prefs3];
   
   var maxVal = 1;
   var data = new google.visualization.DataTable();
@@ -13,37 +14,32 @@ function drawVisualization() {
   data.addColumn('number', 'x');
   data.addColumn('number', 'Prefs1');
   data.addColumn('number', 'Prefs2');
+  data.addColumn('number', 'Prefs3');
 
 
   var pref1Index = 0;
   var pref2Index = 0;
+  var pref3Index = 0;
 
-  while (pref1Index < prefs1.points.length && pref2Index < prefs2.points.length) {
-    var nextp1 = prefs1.points[pref1Index];
-    var nextp2 = prefs2.points[pref2Index];
+  while (pref1Index < prefs1.points.length && pref2Index < prefs2.points.length && pref3Index < prefs3.points.length) {
+    var nextp1 = prefs1.points[pref1Index] || [99, 0];
+    var nextp2 = prefs2.points[pref2Index] || [99, 0];
+    var nextp3 = prefs3.points[pref3Index] || [99, 0];
 
-    console.log(nextp1);
-    console.log(nextp2);
+    var nextX = Math.min(nextp1[0], nextp2[0], nextp3[0]);
 
-    if (nextp1 && nextp1[0] == nextp2[0]) {
-      data.addRow([nextp1[0],
-                  nextp1[1] * prefs1.scaleFactor,
-                  nextp2[1] * prefs2.scaleFactor,]);
-      pref1Index++;
-      pref2Index++;
-    } else if (nextp1 && nextp1[0] < nextp2[0]) {
-      data.addRow([prefs1.points[pref1Index][0],
-                  prefs1.points[pref1Index][1] *prefs1.scaleFactor, null]);
-      pref1Index++;
-    } else {
-      data.addRow([prefs2.points[pref2Index][0],
-                  prefs2.points[pref2Index][1] * prefs.scaleFactor, null]);
-      pref2Index++;
-    }
+    var p1val, p2val, p3val;
+
+    p1val = (nextp1[0] == nextX) ? nextp1[1]*prefs1.scaleFactor : null;
+    p2val = (nextp2[0] == nextX) ? nextp2[1]*prefs2.scaleFactor : null;
+    p3val = (nextp3[0] == nextX) ? nextp3[1]*prefs3.scaleFactor : null;
+
+    if (p1val) { pref1Index++; }
+    if (p2val) { pref2Index++; }
+    if (p3val) { pref3Index++; }
+
+    data.addRow([nextX, p1val, p2val, p3val]);
   }
-
-  console.log(data);
-
 
 
 
@@ -103,8 +99,8 @@ function calculateArea(x1, y1, x2, y2) {
 }
 
 
-function getPrefs() {
-  var lines = $("#prefs1").val().replace(/\r\n/g, "\n").split("\n");
+function getPrefs(i) {
+  var lines = $("#prefs" + String(i)).val().replace(/\r\n/g, "\n").split("\n");
 
   var curPoint;
   var prefs = {};
