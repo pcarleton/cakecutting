@@ -1,8 +1,6 @@
-from prefs.Prefs import Prefs
-
 class StromquistKnives(object):
 
-  def __init__(self, p1, p2, p3, resolution=0.01):
+  def __init__(self, p1, p2, p3, resolution=0.001):
     self.p1 = p1
     self.p2 = p2
     self.p3 = p3
@@ -67,7 +65,7 @@ class StromquistKnives(object):
     print "Player {3} From {0} to {1}, value: {2}".format(ref_knife_pos, pYknife, pYval, pYplayer)
     print "Player {3} From {0} to {1}, value: {2}".format(pYknife, 1, pZval, pZplayer)
 
-    return records
+    return records, (pXval, pYval, pZval)
         
   def findHalfWayPoint(self, prefs, left, right):
     total_val =  prefs.valueOfPiece(left, right)

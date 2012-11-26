@@ -2,7 +2,87 @@
 <head>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript" src="js/lib/paper.js"></script>
 <script src="js/prefs.js"></script>
+<script type="text/javascript">
+var rawData;
+var playing = false;
+$(function() {
+  $("#playToggle").click(function() {
+    if (playing) {
+      playing = false;
+      $(this).val("Play");
+    } else {
+      playing = true;
+      $(this).val("Pause");
+    }
+  });
+});
+</script>
+<script type="text/paperscript" canvas="myCanvas">
+//var rawData = [[0, 0, 0],
+//[0.70609375, 0.30390625, 0.505],
+//[0.7090625, 0.310937, 0.51],
+//[0.712031250, 0.31796875, 0.515],
+//[0.7075, 0.325, 0.52],
+//[0.703125, 0.332031, 0.525],
+//[0.70625, 0.3390625, 0.53],
+//[0.709375, 0.34609375, 0.535],
+//[0.7125, 0.353125, 0.54],
+//[0.715625, 0.36015625, 0.545],
+//[0.7046875, 0.3671875, 0.55],
+//[0.70796875, 0.37421874, 0.55499],
+//[0.7112499, 0.38125, 0.5599],
+//[0.71453125, 0.388281, 0.565],
+//[0.7178125, 0.3953124, 0.57],
+//[0.72109375, 0.40234375, 0.575],
+//[0.71125, 0.409375, 0.58],
+//[0.7146, 0.41640625, 0.585],
+//[0.718124, 0.4234375, 0.59]];
+//
+// Create a rectangle shaped path with its top left point at
+// {x: 75, y: 75} and a size of {width: 75, height: 75}
+var topLeft = new Point(50, 50);
+
+var knifeLength = 200;
+var timeScale = 400;
+var resolution = 0.001;
+
+var size = new Size(timeScale, timeScale/2);
+var cake = new Path.Rectangle(topLeft, size);
+cake.strokeColor = 'green';
+
+function createKnife(color) {
+  var knife = new Path();
+  knife.strokeColor = color;
+  knife.moveTo(topLeft);
+  knife.lineTo(topLeft + [0, knifeLength]);
+
+  return knife;
+}
+
+var knives = [ createKnife('blue'), createKnife('red'), createKnife('orange')];
+var refKnife = createKnife('black');
+
+var frameNum = 0;
+function onFrame(event) {
+  if (playing) {
+    var frameData = rawData[frameNum];
+
+    for (var i = 0; i < knives.length; i++) {
+      knives[i].position.x = topLeft.x + frameData[i]*timeScale;
+    }
+    refKnife.position.x = topLeft.x + frameNum*resolution*timeScale;
+
+    frameNum += 1;
+    if (frameNum >= rawData.length) {
+      frameNum = 0;
+    }
+  }
+}
+
+</script>
+
 </head>
 <body>
 <div id="visualization"></div>
@@ -24,5 +104,7 @@ Prefs 2:
 
 <button id="submit">Submit</button>
 <div id="holder"></div>
+<canvas id="myCanvas" resize></canvas>
+<button id="playToggle">Play</button>
 </body>
 </html>

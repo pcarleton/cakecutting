@@ -125,7 +125,13 @@ $(function() {
   });
 
   $("#submit").click( function() {
-    $.get("runstrom", function( data ) {
+
+    var sendData = {
+      prefs1: $("#prefs1").val(),
+      prefs2: $("#prefs2").val(),
+      prefs3: $("#prefs3").val(),
+    }
+    $.get("runstrom", sendData, function( data ) {
       $("#holder").html(data);
     });
 

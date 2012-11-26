@@ -22,6 +22,9 @@ from datetime import datetime
 import json
 import jinja2
 
+from Prefs import Prefs
+from strom import StromquistKnives
+
 jinja_environment = jinja2.Environment(autoescape=True,
   loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), 'templates')))
 
@@ -38,13 +41,26 @@ class MainHandler(webapp2.RequestHandler):
 class StromHandler(webapp2.RequestHandler):
 
   def get(self):
-    template_values = {}
-    template = jinja_environment.get_template('strom.html')
-    #self.response.out.write(template.render(template_values))
-    self.response.out.write("hi there")
+    p1 = prefsFromText(self.request.get("prefs1"))
+    p2 = prefsFromText(self.request.get("prefs2"))
+    p3 = prefsFromText(self.request.get("prefs3"))
+
+    stromk = StromquistKnives(p1, p2, p3)
+    records, vals = stromk.run()
+
+    template_values = { 'rawData' : records }
+    template = jinja_environment.get_template('vis.html')
+    self.response.out.write(template.render(template_values))
 
 
+def prefsFromText(text):
+  points = []
+  for line in text.split("\n"):
+    x, y = [float(k) for k in line.split()]
+    points.append((x, y))
 
+  return Prefs(points)
+    
 
 app = webapp2.WSGIApplication([('/', MainHandler),
                                ('/runstrom', StromHandler)],

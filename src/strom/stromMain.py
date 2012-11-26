@@ -18,3 +18,4 @@ p3 = Prefs.fromFile(f3)
 
 
 stromK = StromquistKnives(p1, p2, p3)
+stromK.run()
