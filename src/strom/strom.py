@@ -2,10 +2,11 @@ from prefs.Prefs import Prefs
 
 class StromquistKnives(object):
 
-  def __init__(self, p1, p2, p3, resolution=0.01):
+  def __init__(self, p1, p2, p3, verbose=1, resolution=0.01):
     self.p1 = p1
     self.p2 = p2
     self.p3 = p3
+    self.verbose = verbose
 
     self.run((p1, p2, p3), resolution)
 
@@ -19,8 +20,7 @@ class StromquistKnives(object):
     cuttingIndex = -1
     while cuttingIndex < 0:
       #Update knife positions
-      for i in range(3):
-        p_knives[i] = self.findHalfWayPoint(prefs[i], ref_knife_pos, 1)
+      p_knives = self.updateKnives(prefs, ref_knife_pos)
 
       #Determine if a cut should be made
       for i in range(3):
@@ -59,10 +59,21 @@ class StromquistKnives(object):
     pZval = prefs[pZplayer].valueOfPiece(pYknife, 1)
 
 
-    print "Final Values:"
-    print "Player {3} From {0} to {1}, value: {2}".format(0, ref_knife_pos, pXval, cuttingIndex)
-    print "Player {3} From {0} to {1}, value: {2}".format(ref_knife_pos, pYknife, pYval, pYplayer)
-    print "Player {3} From {0} to {1}, value: {2}".format(pYknife, 1, pZval, pZplayer)
+    if self.verbose:
+      print "Final Values:"
+      print "Player {3} From {0} to {1}, value: {2}".format(0, ref_knife_pos, pXval, cuttingIndex)
+      print "Player {3} From {0} to {1}, value: {2}".format(ref_knife_pos, pYknife, pYval, pYplayer)
+      print "Player {3} From {0} to {1}, value: {2}".format(pYknife, 1, pZval, pZplayer)
+
+    return (pX
+
+  def updateKnives(self, prefs, ref_knife):
+    new_p_knives = [0, 0, 0]
+    for i in range(3):
+      new_p_knives[i] = self.findHalfWayPoint(prefs[i], ref_knife, 1)
+
+    return new_p_knives
+    
         
   def findHalfWayPoint(self, prefs, left, right):
     total_val =  prefs.valueOfPiece(left, right)
@@ -84,6 +95,11 @@ class StromquistKnives(object):
     return mid
           
 
+
+def StromquistCheater(StromquistKnives):
+  
+  def updateKnives(prefs, ref_knife):
+    
 
 
 
