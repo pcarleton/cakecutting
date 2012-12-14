@@ -23,11 +23,14 @@ class StromquistKnives(object):
       for i in range(3):
         p_knives[i] = self.findHalfWayPoint(prefs[i], ref_knife_pos, 1)
 
+
+      secondCuttingKnife = sorted(list(p_knives))[1]
+
       #Determine if a cut should be made
       for i in range(3):
         pieceX = prefs[i].valueOfPiece(0, ref_knife_pos)
-        pieceY = prefs[i].valueOfPiece(ref_knife_pos, p_knives[1])
-        pieceZ = prefs[i].valueOfPiece(p_knives[1], 1)
+        pieceY = prefs[i].valueOfPiece(ref_knife_pos, secondCuttingKnife)
+        pieceZ = prefs[i].valueOfPiece(secondCuttingKnife, 1)
 
         if pieceX >= (1/3.0) and pieceX > pieceY and pieceX > pieceZ:
           cuttingIndex = i
@@ -43,29 +46,59 @@ class StromquistKnives(object):
     leftPlayer = remainingPlayers[0]
     rightPlayer = remainingPlayers[1]
    
-   
     pYknife, pYplayer, pZplayer = (None, None, None)
+
+
+    pYknife = sorted(list(p_knives))[1]
+    
     #Pick which other knife cuts
     if p_knives[leftPlayer] < p_knives[rightPlayer]:
-      pYknife = p_knives[leftPlayer]
       pYplayer = leftPlayer
       pZplayer = rightPlayer
     else:
-      pYknife = p_knives[rightPlayer]
       pYplayer = rightPlayer
       pZplayer = leftPlayer
+
+    pieceX = self.createPiece(0, ref_knife_pos, cuttingIndex)
+    pieceY = self.createPiece(ref_knife_pos, pYknife, pYplayer)
+    pieceZ = self.createPiece(pYknife, 1, pZplayer)
       
     pXval = prefs[cuttingIndex].valueOfPiece(0, ref_knife_pos)
     pYval = prefs[pYplayer].valueOfPiece(ref_knife_pos, pYknife)
     pZval = prefs[pZplayer].valueOfPiece(pYknife, 1)
-
 
     print "Final Values:"
     print "Player {3} From {0} to {1}, value: {2}".format(0, ref_knife_pos, pXval, cuttingIndex)
     print "Player {3} From {0} to {1}, value: {2}".format(ref_knife_pos, pYknife, pYval, pYplayer)
     print "Player {3} From {0} to {1}, value: {2}".format(pYknife, 1, pZval, pZplayer)
 
-    return records, (pXval, pYval, pZval)
+    pieces = [None, None, None]
+    pieces[cuttingIndex] = pieceX
+    pieces[pYplayer] = pieceY
+    pieces[pZplayer] = pieceZ
+
+    print pieces
+
+    endPoints = [0, 0, 0]
+    endPoints[cuttingIndex] = [0, ref_knife_pos]
+    endPoints[pYplayer] = [ref_knife_pos, pYknife]
+    endPoints[pZplayer] = [pYknife, 1]
+
+    return records, pieces, endPoints
+
+  def createPiece(self, left, right, winner):
+    prefs = (self.p1, self.p2, self.p3)
+    piece = {}
+    piece['left'] = left
+    piece['right'] = right
+    values = [prefs[i].valueOfPiece(left, right) for i in range(3)]
+    piece['values'] = values
+    piece['winner'] = winner
+    piece['winnerValue'] = values[winner]
+
+    return piece
+    
+    
         
   def findHalfWayPoint(self, prefs, left, right):
     total_val =  prefs.valueOfPiece(left, right)
@@ -87,5 +120,5 @@ class StromquistKnives(object):
     return mid
 
 
-def isCloseEnough(v1, v2, tolerance=0.01):
+def isCloseEnough(v1, v2, tolerance=0.001):
   return abs(v1 - v2) <= tolerance

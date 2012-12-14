@@ -11,35 +11,15 @@ $(function() {
   $("#playToggle").click(function() {
     if (playing) {
       playing = false;
-      $(this).val("Play");
+      $(this).html("Play");
     } else {
       playing = true;
-      $(this).val("Pause");
+      $(this).html("Pause");
     }
   });
 });
 </script>
 <script type="text/paperscript" canvas="myCanvas">
-//var rawData = [[0, 0, 0],
-//[0.70609375, 0.30390625, 0.505],
-//[0.7090625, 0.310937, 0.51],
-//[0.712031250, 0.31796875, 0.515],
-//[0.7075, 0.325, 0.52],
-//[0.703125, 0.332031, 0.525],
-//[0.70625, 0.3390625, 0.53],
-//[0.709375, 0.34609375, 0.535],
-//[0.7125, 0.353125, 0.54],
-//[0.715625, 0.36015625, 0.545],
-//[0.7046875, 0.3671875, 0.55],
-//[0.70796875, 0.37421874, 0.55499],
-//[0.7112499, 0.38125, 0.5599],
-//[0.71453125, 0.388281, 0.565],
-//[0.7178125, 0.3953124, 0.57],
-//[0.72109375, 0.40234375, 0.575],
-//[0.71125, 0.409375, 0.58],
-//[0.7146, 0.41640625, 0.585],
-//[0.718124, 0.4234375, 0.59]];
-//
 // Create a rectangle shaped path with its top left point at
 // {x: 75, y: 75} and a size of {width: 75, height: 75}
 var topLeft = new Point(50, 50);
@@ -63,11 +43,20 @@ function createKnife(color) {
 
 var knives = [ createKnife('blue'), createKnife('red'), createKnife('orange')];
 var refKnife = createKnife('black');
-
+var piece1, piece2, piece3;
+var texts = [];
 var frameNum = 0;
 function onFrame(event) {
   if (playing) {
+    if (frameNum == 0) {
+      hidePieces();
+
+    }
     var frameData = rawData[frameNum];
+
+    if (piece1) {
+      piece1.remove();
+    }
 
     for (var i = 0; i < knives.length; i++) {
       knives[i].position.x = topLeft.x + frameData[i]*timeScale;
@@ -76,8 +65,63 @@ function onFrame(event) {
 
     frameNum += 1;
     if (frameNum >= rawData.length) {
+      playing = false;
       frameNum = 0;
+      showPieces();
     }
+  }
+}
+
+function showPieces() {
+    piece1 = createPiece(0);
+    text1 = createText(piece1, 0);
+
+    piece2 = createPiece(1);
+    text2 = createText(piece2, 1);
+
+    piece3 = createPiece(2);
+    text3 = createText(piece3, 2);
+}
+
+
+function createPiece(index) {
+  var colors = ['blue', 'red', 'orange'];
+  var pt =  new Point(topLeft.x + endpoints[index][0]*timeScale, 50); 
+  var size =new Size((endpoints[index][1] - endpoints[index][0])*timeScale, timeScale/4); 
+  var piece = new Path.Rectangle(pt, size);
+  piece.fillColor = colors[index];
+  return piece;
+}
+
+function createText(piece, index) {
+    var colors = ['blue', 'red', 'orange'];
+
+    for (var i = 0; i < 3; i++) {
+      var text = new PointText(piece.position);
+      text.position.y += i*20;
+      text.content = values[index]['values'][i].toFixed(3);
+      if (index == i) {
+        text.fillColor = 'white';
+      } else {
+        text.fillColor = colors[i];
+      }
+      texts.push(text);
+    }
+
+    return text;
+}
+
+function hidePieces() {
+  if (piece1) {
+    piece1.remove();
+    piece2.remove();
+    piece3.remove();
+
+    for (var i = 0; i < texts.length; i++) {
+      texts[i].remove();
+    }
+    texts = [];
+
   }
 }
 
@@ -85,7 +129,7 @@ function onFrame(event) {
 
 </head>
 <body>
-<div id="visualization"></div>
+<div id="visualization" ></div>
 Prefs 1:
 <textarea id="prefs1" cols="6" rows="10">
 0 1
@@ -103,8 +147,8 @@ Prefs 2:
 <button id="graphIt" >Graph it</button>
 
 <button id="submit">Submit</button>
-<div id="holder"></div>
-<canvas id="myCanvas" resize></canvas>
 <button id="playToggle">Play</button>
+<div id="holder"></div>
+  <canvas id="myCanvas" resize ></canvas>
 </body>
 </html>

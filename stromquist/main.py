@@ -46,9 +46,11 @@ class StromHandler(webapp2.RequestHandler):
     p3 = prefsFromText(self.request.get("prefs3"))
 
     stromk = StromquistKnives(p1, p2, p3)
-    records, vals = stromk.run()
+    records, vals, endpoints = stromk.run()
 
-    template_values = { 'rawData' : records }
+    template_values = { 'rawData' : records,
+                        'values' : json.dumps(vals),
+                        'endpoints': endpoints }
     template = jinja_environment.get_template('vis.html')
     self.response.out.write(template.render(template_values))
 
