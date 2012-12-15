@@ -125,11 +125,14 @@ $(function() {
   });
 
   $("#submit").click( function() {
+    alert($("input[name=stype]:radio:checked").val());
 
     var sendData = {
       prefs1: $("#prefs1").val(),
       prefs2: $("#prefs2").val(),
       prefs3: $("#prefs3").val(),
+      type: $("input[name=stype]:radio:checked").val(),
+
     }
     $.get("runstrom", sendData, function( data ) {
       $("#holder").html(data);

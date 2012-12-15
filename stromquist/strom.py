@@ -19,10 +19,8 @@ class StromquistKnives(object):
     cuttingIndex = -1
     while cuttingIndex < 0:
       records.append(list(p_knives))
-      #Update knife positions
-      for i in range(3):
-        p_knives[i] = self.findHalfWayPoint(prefs[i], ref_knife_pos, 1)
-
+      #Update knife posit    
+      p_knives = self.updateKnives(prefs, ref_knife_pos)
 
       secondCuttingKnife = sorted(list(p_knives))[1]
 
@@ -98,7 +96,12 @@ class StromquistKnives(object):
 
     return piece
     
-    
+  def updateKnives(self, prefs, ref_knife):
+    new_p_knives = [0, 0, 0]
+    for i in range(3):
+      new_p_knives[i] = self.findHalfWayPoint(prefs[i], ref_knife, 1)
+
+    return new_p_knives    
         
   def findHalfWayPoint(self, prefs, left, right):
     total_val =  prefs.valueOfPiece(left, right)
@@ -119,6 +122,43 @@ class StromquistKnives(object):
           sl = mid
     return mid
 
+class StromquistCheater(StromquistKnives):
+  
+  def updateKnives(self, prefs, ref_knife):
+    new_p_knives = StromquistKnives.updateKnives(self, prefs, ref_knife)
+    p1_knife = new_p_knives[0]
+    right_most = max(new_p_knives)
+    if p1_knife != right_most:
+      new_p_knives[0] = right_most - self.resolution
+    return new_p_knives
+    
+
+
+class StromquistCheater2(StromquistKnives):
+  
+  def updateKnives(self, prefs, ref_knife):
+    new_p_knives = StromquistKnives.updateKnives(self, prefs, ref_knife)
+    p1_knife = new_p_knives[0]
+    right_most = max(new_p_knives)
+    left_most = min(new_p_knives)
+    if p1_knife != right_most and p1_knife != left_most:
+      new_p_knives[0] = right_most - self.resolution
+    return new_p_knives
+ 
+
+class StromquistAllCheat(StromquistKnives):
+  
+  def updateKnives(self, prefs, ref_knife):
+    new_p_knives = StromquistKnives.updateKnives(self, prefs, ref_knife)
+    right_most = max(new_p_knives)
+    left_most = min(new_p_knives)
+    mid_knife_p = 0
+    for i in range(3):
+      if new_p_knives[i] != left_most and new_p_knives != right_most:
+        mid_knife_p = 0
+
+    new_p_knives[mid_knife_p] = right_most - self.resolution
+    return new_p_knives
 
 def isCloseEnough(v1, v2, tolerance=0.001):
   return abs(v1 - v2) <= tolerance

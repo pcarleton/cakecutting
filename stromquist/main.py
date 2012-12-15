@@ -23,7 +23,7 @@ import json
 import jinja2
 
 from Prefs import Prefs
-from strom import StromquistKnives
+from strom import StromquistKnives, StromquistCheater, StromquistCheater2, StromquistAllCheat
 
 jinja_environment = jinja2.Environment(autoescape=True,
   loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), 'templates')))
@@ -45,7 +45,9 @@ class StromHandler(webapp2.RequestHandler):
     p2 = prefsFromText(self.request.get("prefs2"))
     p3 = prefsFromText(self.request.get("prefs3"))
 
-    stromk = StromquistKnives(p1, p2, p3)
+    stromOpts = [StromquistKnives, StromquistCheater, StromquistCheater2, StromquistAllCheat]
+
+    stromk = stromOpts[int(self.request.get("type"))](p1, p2, p3)
     records, vals, endpoints = stromk.run()
 
     template_values = { 'rawData' : records,
